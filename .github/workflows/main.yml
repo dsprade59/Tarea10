@@ -1,0 +1,62 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - 'v*'   # Se dispara cuando haces un tag como v1.0
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: 17
+
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    - name: Build fat JAR with Maven
+      run: mvn clean package
+
+    - name: Create .deb with jpackage
+      run: |
+        mkdir -p out/deb
+        jpackage \
+          --input target \
+          --name ClientesApp \
+          --main-jar Tarea10-1.0-SNAPSHOT.jar \
+          --type deb \
+          --dest out/deb \
+          --app-version 1.0 \
+          --vendor "dsprade59" \
+          --icon src/main/resources/icon.png \
+          --java-options "-Xmx512m"
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ github.ref_name }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload Release Assets
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          target/Tarea10-1.0-SNAPSHOT.jar
+          out/deb/*.deb
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
