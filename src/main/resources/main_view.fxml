@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.MainController"
+      spacing="10"
+      style="-fx-padding:10;">
+
+    <HBox spacing="10">
+        <Button text="Cargar CSV" onAction="#cargarCSV"/>
+        <TextField fx:id="txtFiltroNombre" promptText="Nombre contiene..."/>
+        <ComboBox fx:id="cmbCiudad"/>
+        <Button text="Filtrar" onAction="#filtrar"/>
+        <Button text="Exportar PDF" onAction="#exportarPDF"/>
+        <Button text="Ayuda" onAction="#mostrarAyuda"/>
+    </HBox>
+
+    <HBox spacing="15">
+
+        <VBox spacing="5" prefWidth="420">
+            <TableView fx:id="tablaClientes" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn text="Nombre" fx:id="colNombre"/>
+                    <TableColumn text="Email" fx:id="colEmail"/>
+                    <TableColumn text="Ciudad" fx:id="colCiudad"/>
+                </columns>
+            </TableView>
+
+            <Label fx:id="lblTotal" text="Total clientes: 0"/>
+        </VBox>
+
+        <Pane fx:id="panelGrafico" prefWidth="450"/>
+
+    </HBox>
+
+</VBox>
